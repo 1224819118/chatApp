@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/head.css"/>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav title">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+		    <a id="submit_username" class="mui-icon mui-icon-right-nav mui-pull-right" style="color: white;font-size: 14px;line-height: 25px;">搜索</a>
+		    <h1 class="mui-title title-color">搜素用户</h1>
+		</header>
+		
+		<div class="mui-content">
+		    <div class="mui-input-row">
+		        <input id="txt_username" type="text" class="mui-input-speech mui-input-clear" 
+		        	placeholder="输入用户的账号">
+		    </div>
+		    
+		</div>
+		
+		
+		
+		
+		
+		<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			
+			mui.plusReady(function(){
+				var user = app.getUserGlobalInfo();
+				var txt_username = document.getElementById("txt_username");
+				
+				
+				//修改昵称事件
+				var submit_username = document.getElementById("submit_username");
+				submit_username.addEventListener("click",function(){
+					var friend_username = txt_username.value;
+					if(friend_username.length > 8){
+						app.showToast("昵称不可长于8位");
+						return false;
+					}
+					if(!app.isNotNull(friend_username)){
+						app.showToast("不可为空");
+						return false;
+					}else{
+						plus.nativeUI.showWaiting("请稍后...");
+					
+						mui.ajax(app.serverUrl+"/serach?myUserId="+user.id+"&friendUserName="
+						+friend_username,{
+							data:{},
+							type:"post",
+							dataType:"json",
+							timeout:10000,
+							headers:{'Content-Type':'application/json'},
+							success:function(data){
+								plus.nativeUI.closeWaiting();
+								if(data.status == 200){
+						
+									mui.openWindow({
+										url:"friendinfo.html",
+										id:"friendinfo.html",
+										style:{},
+										extras:{
+											friendinfo:data.message
+										},
+										createNew:true
+									});
+								}else{
+									app.showToast(data.message);
+								}
+							}
+							
+						})
+					}
+					
+					
+					
+				})
+						
+			})
+		</script>
+	</body>
+
+</html>

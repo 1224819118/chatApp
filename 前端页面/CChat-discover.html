@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div class="mui-content">
+		    <ul class="mui-table-view">
+		        <li class="mui-table-view-cell mui-media">
+		            <a href="javascript:;">
+		                <img class="mui-media-object mui-pull-left" src="img/pengyouquan.png"
+		                	 style="max-width: 24px;height: 24px;">
+		                <div class="mui-media-body">
+		                    <p class="mui-ellipsis" style="line-height: 24px;color: #000000;font-size: 16px;">
+		                    	<span id="" style="margin-left: 10px;">朋友圈</span>
+		                    </p>
+		                </div>
+		            </a>
+		        </li>
+		    </ul>
+		    <br />
+		    <ul class="mui-table-view">
+		        <li id="add_friends" class="mui-table-view-cell mui-media">
+		            <a href="javascript:;">
+		                <img class="mui-media-object mui-pull-left" src="img/tianjiahaoyou.png"
+		                	 style="max-width: 24px;height: 24px;">
+		                <div class="mui-media-body">
+		                    <p class="mui-ellipsis" style="line-height: 24px;color: #000000;font-size: 16px;">
+		                    	<span id="" style="margin-left: 10px;">添加好友</span>
+		                    </p>
+		                </div>
+		            </a>
+		        </li>
+		        <li class="mui-table-view-cell mui-media">
+		            <a href="javascript:;">
+		                <img class="mui-media-object mui-pull-left" src="img/saoyisao.png"
+		                	 style="max-width: 24px;height: 24px;">
+		                <div class="mui-media-body">
+		                    <p class="mui-ellipsis" style="line-height: 24px;color: #000000;font-size: 16px;">
+		                    	<span id="" style="margin-left: 10px;">扫一扫</span>
+		                    </p>
+		                </div>
+		            </a>
+		        </li>
+		    </ul>
+		</div>
+		
+		<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			
+			mui.plusReady(function(){
+				var add_friends = document.getElementById("add_friends");
+				add_friends.addEventListener("tap",function(){
+					mui.openWindow("searchfriends.html","searchfriends.html");
+				})
+			})
+		</script>
+	</body>
+
+</html>

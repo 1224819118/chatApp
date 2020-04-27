@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/head.css"/>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav title">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+		    
+		    <h1  class="mui-title title-color ">详细资料</h1>
+		</header>
+		
+		<div class="mui-content">
+		   	<ul class="mui-table-view">
+		   	    <li class="mui-table-view-cell mui-media" style="height: 85px;">
+		   	        <a href="javascript:;">
+		   	            <img id="friend_img" class="mui-media-object mui-pull-left" src="img/未定义.PNG" style="height: 70px;width: 75px;">
+		   	            <div class="mui-media-body">
+		   	                <span id="friend_nickname" class="" >
+		   	                	昵称
+		   	                </span>
+		   	                <p id="friend_name" class="mui-ellipsis" style="line-height: 42px;font-size: 16px;">账号：123456789</p>
+		   	            </div>
+		   	        </a>
+		   	    </li>
+		   	</ul>
+		   	<br />
+		   	<br />
+		   	<ul class="mui-table-view">
+		   	        <li id="add_confirm" class="mui-table-view-cell mui-badge-success mui-btn-block" style="text-align: center; line-height: 45px;">
+		   	            <a class="mui-navigate-right " >
+		   	                添加好友
+		   	            </a>
+		   	        </li>
+		   	       
+		   	    </ul>
+		   	    <br	 />
+		   	 <ul class="mui-table-view">
+		   	     <li id="goback" class="mui-table-view-cell" style="text-align: center; line-height: 45px;">
+		   	            <a class="mui-navigate-right">
+		   	                 返回
+		   	            </a>
+		   	     </li>
+		   	</ul>
+		</div>
+		
+	
+		
+		
+		<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			
+			mui.plusReady(function(){
+				var myinfo = app.getUserGlobalInfo();
+				var currentwebview = plus.webview.currentWebview();
+				var friendinfo = currentwebview.friendinfo;
+				
+				var friend_img = document.getElementById("friend_img");
+				if(friendinfo.faceImage != null){
+					friend_img.src = app.imgServerUrl+friendinfo.faceImage;
+				}
+				var friend_name = document.getElementById("friend_name");
+				friend_name.innerHTML = "账号："+friendinfo.userName;
+				var friend_nickname = document.getElementById("friend_nickname");
+				friend_nickname.innerHTML = friendinfo.nickName;
+				
+				var goback = document.getElementById("goback");
+				goback.addEventListener("tap",function(){
+					mui.back();
+				})
+				
+				var add_confirm = document.getElementById("add_confirm");
+				add_confirm.addEventListener("tap",function(){
+					mui.ajax(app.serverUrl+"/addfriend?myUserId="+myinfo.id+"&friendUserName="
+						+friendinfo.userName,{
+							data:{},
+							type:"post",
+							dataType:"json",
+							timeout:10000,
+							headers:{'Content-Type':'application/json'},
+							success:function(data){
+								plus.nativeUI.closeWaiting();
+								if(data.status == 200){
+									app.showToast(data.message);
+									mui.openWindow("index.html","index.html");
+								}else{
+									app.showToast(data.message);
+								}
+							}
+						})
+				})
+				
+			})
+		</script>
+	</body>
+
+</html>

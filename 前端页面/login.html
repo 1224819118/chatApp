@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+		</script>
+	</head>
+
+
+	<body>
+		
+		
+		<form class="mui-input-group" id="loginform">
+		    <div class="mui-input-row">
+		        <label>用户名</label>
+		    	<input type="text" class="mui-input-clear" placeholder="请输入用户名" id="username">
+		    </div>
+		    <div class="mui-input-row">
+		        <label>密码</label>
+		        <input type="password" class="mui-input-password" placeholder="请输入密码" id="password">
+		    </div>
+		    <div class="mui-button-row">
+		        <button type="submit" class="mui-btn mui-btn-primary" >登录</button>   
+		        <button id="link_register" type="button" class="mui-btn mui-btn-success mui-btn-outlined">注册</button>
+		    </div>
+		</form>
+		<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.plusReady(function(){
+		
+				//判断用户是否登陆过了
+				if(app.getUserGlobalInfo() != null){
+					mui.openWindow("index.html","index.html");
+				}
+				
+				
+				//获取表单信息
+				var loginform = document.getElementById("loginform");
+				var username = document.getElementById("username");
+				var tx_password = document.getElementById("password");
+				
+				//注册事件
+				var link_register = document.getElementById("link_register");
+					link_register.addEventListener("click",function(){
+						mui.openWindow("register.html","register.html");
+					})
+				//登录事件
+				loginform.addEventListener("submit",function(e){
+					//判断用户输入的信息
+					if(!app.isNotNull(username.value)){
+						username.focus();
+					}else if(!app.isNotNull(tx_password.value)){
+						tx_password.focus();
+					}else{
+						//判断长度进行限制
+						if (username.value.length > 12) {
+							app.showToast("用户名长度不能超过12");
+							
+							return false;
+						} else if(tx_password.value.length > 12){
+							app.showToast("密码不能超过12");
+							return false;
+						}
+						
+						//获取每台手机的唯一cid
+						var cid = plus.push.getClientInfo().clientid;
+						//与后端联调
+						mui.ajax(app.serverUrl+"/login",{
+							data:{
+								'userName':username.value,
+								'password':tx_password.value,
+								'cid':cid
+							},
+							dataType:'json',
+							type:'post',
+							timeout:10000,
+							headers:{'Content-Type':'application/json'},
+							success:function(data){
+								username.blur();
+								tx_password.blur();
+								//根据服务器的响应结果进行判断是否登录成功
+								if(data.status == 200){
+									var userInfo = data.message;
+									app.setUserGlobalInfo(userInfo);
+									//页面跳转
+									mui.openWindow("index.html","index.html");
+									
+								}else{
+									app.showToast(data.message);
+								}
+								
+							}
+						})
+					}
+					
+					
+					//阻止默认事件
+					e.preventDefault();
+				});
+				
+				
+				
+			})
+		</script>
+	</body>
+</html>

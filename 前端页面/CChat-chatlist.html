@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		
+		<div class="mui-content">
+		     <ul id="friend_request_list" class="mui-table-view">
+	
+		        
+		    </ul>
+		    
+		</div>
+		<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			
+			mui.plusReady(function(){
+				
+				
+					
+				//获取用户全局对象
+				var user = app.getUserGlobalInfo();
+				
+				//
+				var thisWebView = plus.webview.currentWebview();
+				
+				
+				//渲染好友请求块
+				thisWebView.addEventListener("show",function(){
+					loadlingFriendRequest();
+				});
+				
+			});
+			//加载请求列表
+			function loadlingFriendRequest(){
+				//获取用户全局对象
+				var user = app.getUserGlobalInfo();
+				
+				//与后端联调
+						mui.ajax(app.serverUrl+"/selectFriendRequests?myId="+user.id,{
+							data:{},
+							dataType:'json',
+							type:'post',
+							timeout:10000,
+							headers:{'Content-Type':'application/json'},
+							success:function(data){
+								
+								//根据服务器的响应结果进行判断是否登录成功
+								if(data.status == 200){
+									console.log(JSON.stringify(data.message));
+									var friendrequestlist = data.message;
+									var friend_request_list = document.getElementById("friend_request_list");
+									if(friendrequestlist != null && friendrequestlist.length > 0){
+										var requestHTML = "";
+										for(var i =0;i<friendrequestlist.length;i++){
+											requestHTML+=renderFriendRequests(friendrequestlist[i]);
+										}
+										friend_request_list.innerHTML = requestHTML;
+										//动态对按钮进行事件绑定
+										//0代表忽略，1代表通过
+										mui(".btnOperation").on("tap",".ignoreRequest",function(e){
+											var friendId = this.getAttribute("friendId");
+											operatorFriendRequest(user.id,friendId,0);
+										});
+										
+										mui(".btnOperation").on("tap",".passRequest",function(e){
+											var friendId = this.getAttribute("friendId");
+											operatorFriendRequest(user.id,friendId,1);
+										});
+										
+									}else{
+										friend_request_list.innerHTML = "";
+									}
+								}else{
+									app.showToast(data.message);
+								}
+								
+							}
+						});			
+			}
+			//操作好友请求方法
+			function operatorFriendRequest(userId,friendId,operType){
+				console.log(friendId);
+				mui.ajax(app.serverUrl+"/operFriendRequest?myId="+userId+"&sendUserId="+friendId+"&operType="+operType,{
+					data:{},
+							dataType:'json',
+							type:'post',
+							timeout:10000,
+							headers:{'Content-Type':'application/json'},
+							success:function(data){
+								app.showToast(data.message);
+								// TODO 通讯录
+								//重新加载好友请求记录
+								loadlingFriendRequest();
+								
+								
+							}
+				});
+			}
+			
+			//加载插入的渲染HTML
+			function renderFriendRequests(friend){
+				var html = "";
+				
+				html +=' <li class="mui-table-view-cell mui-media btnOperation">'+
+		            '<a href="javascript:;">';
+		                if(friend.sendFaceImage != null){
+		                	html+='<img class="mui-media-object mui-pull-left" src="'+app.imgServerUrl+friend.sendFaceImage+'">';	
+		                }else{
+		                	html+='<img class="mui-media-object mui-pull-left" src="img/未定义.PNG">';
+		                }
+		                html+=' <span id="" class="mui-pull-right" >'+
+		               		'<button friendId="'+friend.sendUserId+'"  type="button"  class="passRequest mui-btn mui-btn-red" style="padding: 4px 10px;margin-right:5px;">接受</button>'+
+		                	'<button friendId="'+friend.sendUserId+'"  type="button"  class="ignoreRequest mui-btn mui-btn-grey" style="padding: 4px 10px;">忽略</button>'+
+		             '  </span>'+
+		                '<div class="mui-media-body" >'+
+		                    '<label>'+friend.sendNickName+'</label>'+
+		                    '<p class="mui-ellipsis">请求加你为好友</p>'+
+		               ' </div> '+  
+		           ' </a>'+
+		        '</li>';
+				
+				return html;
+			}
+		</script>
+	</body>
+
+</html>

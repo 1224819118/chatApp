@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/head.css"/>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav title">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+		    <a id="submit_nickname" class="mui-icon mui-icon-right-nav mui-pull-right" style="color: white;font-size: 14px;line-height: 25px;">完成</a>
+		    <h1 class="mui-title title-color">设置昵称</h1>
+		</header>
+		
+		<div class="mui-content">
+		    <div class="mui-input-row">
+		        <input id="txt_nickname" type="text" class="mui-input-speech mui-input-clear" 
+		        	placeholder="修改昵称">
+		    </div>
+		    
+		</div>
+		
+		
+		
+		
+		<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			
+			mui.plusReady(function(){
+				var user = app.getUserGlobalInfo();
+				var mynickname = user.nickName;
+				var txt_nickname = document.getElementById("txt_nickname");
+				//默认是当前的名称
+				txt_nickname.value = mynickname;
+				
+				//修改昵称事件
+				var submit_nickname = document.getElementById("submit_nickname");
+				submit_nickname.addEventListener("click",function(){
+					var newnickname = txt_nickname.value;
+					if(newnickname.length > 8){
+						app.showToast("昵称不可长于8位");
+						return false;
+					}
+					if(!app.isNotNull(newnickname)){
+						app.showToast("不可为空");
+						return false;
+					}else{
+						plus.nativeUI.showWaiting("请稍后...");
+					
+						mui.ajax(app.serverUrl+"/setNickName",{
+							data:{
+								userId:user.id,
+								nickName: newnickname
+							},
+							type:"post",
+							dataType:"json",
+							timeout:10000,
+							headers:{'Content-Type':'application/json'},
+							success:function(data){
+								plus.nativeUI.closeWaiting();
+								if(data.status == 200){
+									var userInfo = data.message;
+									app.setUserGlobalInfo(userInfo);
+									// 触发另外一个webview的自定义事件，可以使用 mui.fire()
+									var CChat_meWebview = plus.webview.getWebviewById("CChat-me.html");
+									mui.fire(CChat_meWebview, "refresh");
+									mui.back();
+								}else{
+									app.showToast(data.message);
+								}
+							}
+							
+						})
+					}
+					
+					
+					
+				})
+						
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+		</script>
+	</head>
+
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">注册</h1>
+    </header>
+    <div class="mui-content">
+        <form id="registerform" class="mui-input-group">
+            <div class="mui-input-row">
+                <label>账号</label>
+                <input type="text" class="mui-input-clear" placeholder="请输入账号" id="tx_username">
+            </div>
+            <div class="mui-input-row">
+                <label>密码</label>
+                <input type="password" class="mui-input-clear" placeholder="请输入密码" id="tx_password">
+            </div>
+            <div class="mui-input-row">
+                <label>确认密码</label>
+                <input type="password" class="mui-input-clear" placeholder="请输入密码" id="confrim_password">
+            </div>
+            <div class="mui-input-row">
+                <label>昵称</label>
+                <input type="text" class="mui-input-clear" placeholder="请输入昵称" id="tx_nickname">
+            </div>
+            <div class="mui-button-row">
+		        <button type="submit" class="mui-btn mui-btn-primary" id="register">注册</button>   
+		    </div>
+        </form>
+       
+      
+    </div>
+    
+    
+		<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.plusReady(function(){
+					var registerform = document.getElementById("registerform");
+					
+					registerform.addEventListener("submit",function(e){
+						var tx_username = document.getElementById("tx_username");
+						var tx_password = document.getElementById("tx_password");
+						var tx_confirm_password = document.getElementById("confrim_password");
+						var tx_nickname = document.getElementById("tx_nickname");
+						var cid = plus.push.getClientInfo().clientid;
+						
+						if(tx_username.value.length > 8){
+							app.showToast("昵称长度最大为8");
+							return false;
+						}else if(!app.isNotNull(tx_username.value)||!app.isNotNull(tx_password.value)||!app.isNotNull(tx_confirm_password.value)||!app.isNotNull(tx_nickname.value)){
+							app.showToast("输入不可以为空");
+							return false;
+						}else if(tx_confirm_password.value != tx_password.value){
+							app.showToast("两次密码不一致");
+							return false;
+						}else{
+							mui.ajax(app.serverUrl+"/register",{
+							data:{
+								userName:tx_username.value,
+								password:tx_password.value,
+								nickName:tx_nickname.value,
+								cid:cid
+							},
+							dataType:'json',
+							type:'post',
+							timeout:10000,
+							headers:{'Content-Type':'application/json'},
+							success:function(data){
+								if(data.status == 200){
+									var userInfo = data.message;
+									app.setUserGlobalInfo(userInfo);
+									mui.openWindow("index.html","index.html");
+								}else{
+									app.showToast(data.message);
+								}
+								
+								}
+							})
+						}
+					//阻止默认事件
+					e.preventDefault();
+					})
+					
+					
+					
+				});
+				
+		</script>
+	</body>
+</html>

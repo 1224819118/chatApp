@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="css/head.css"/>
+    <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_1775523_z8xi3pd3ubh.css"/>
+    <script type="text/javascript" charset="utf-8">
+      	mui.init();
+      	
+      	mui.plusReady(function(){
+      		plus.navigator.setStatusBarBackground("#000000");
+      		plus.navigator.setStatusBarStyle("dark");
+      	});
+    </script>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav title">
+	    <h1 class="mui-title title-color"><b>CChat</b></h1>
+	</header>
+	
+	
+	<nav class="mui-bar mui-bar-tab">
+	    <a class="mui-tab-item mui-active" tabindex="0">
+	        <span class="mui-icon  mui-icon-chatbubble"></span>
+	        <span class="mui-tab-label">首页</span>
+	    </a>
+	    <a class="mui-tab-item" tabindex="1">
+	        <span class="mui-icon mui-icon-chatboxes"></span>
+	        <span class="mui-tab-label">通讯录</span>
+	    </a>
+	    <a class="mui-tab-item" tabindex="2">
+	        <span class="mui-icon mui-icon-pengyouquan"></span>
+	        <span class="mui-tab-label">发现</span>
+	    </a>
+	    <a class="mui-tab-item" tabindex="3">
+	        <span class="mui-icon mui-icon-contact"></span>
+	        <span class="mui-tab-label">我</span>
+	    </a>
+	</nav>
+	
+	
+	
+	<script type="text/javascript">
+		var cchatArray = [
+			{
+				pageId: "CChat-chatlist.html",
+				pageUrl: "CChat-chatlist.html"
+			},
+			{
+				pageId: "CChat-tel.html",
+				pageUrl: "CChat-tel.html"
+			},
+			{
+				pageId: "CChat-discover.html",
+				pageUrl: "CChat-discover.html"
+			},
+			{
+				pageId: "CChat-me.html",
+				pageUrl: "CChat-me.html"
+			}
+		];
+		
+		var CChatStyle = {
+			top:"44px",
+			bottom:"50.4px"
+		}
+		
+		mui.plusReady(function(){
+			//禁止返回到登陆页面
+			mui.back = function(){
+				return false;
+			}
+			var indexWedView = plus.webview.currentWebview();
+			//向当前主页webview追加四张webview对象
+			for(var i =0 ;i<cchatArray.length;i++){
+				var CChatPage = plus.webview.create(cchatArray[i].pageUrl,cchatArray[i].pageId,CChatStyle);
+				//隐藏创建好的窗口
+				CChatPage.hide();
+				//追加每一个子页面到当前主页面
+				indexWedView.append(CChatPage);
+				//默认显示低一页
+				
+			}
+			plus.webview.show(cchatArray[0].pageId);
+			
+			//批量绑定tap事件展示不同的页面
+			mui(".mui-bar-tab").on("tap","a",function(){
+				var tabindex = this.getAttribute("tabindex");
+				//显示点击的tab选项所对应的页面
+				plus.webview.show(cchatArray[tabindex].pageId,"fade-in",200);
+				for(var i =0 ;i<cchatArray.length;i++){
+				if (i!=tabindex){
+					//隐藏其他不需要的页面
+					plus.webview.hide(cchatArray[i].pageId,"fade-out",200);
+				}
+				
+			}
+			})
+			
+			
+		})
+	</script>
+	</body>
+</body>
+</html>

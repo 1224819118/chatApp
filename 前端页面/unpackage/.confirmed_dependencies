@@ -1,0 +1,45 @@
+{
+	"index.html": {
+		"resources": [
+			"CChat-chatlist.html"
+		],
+		"refer": [
+			"CChat-chatlist.html",
+			"CChat-tel.html",
+			"CChat-me.html",
+			"CChat-discover.html"
+		]
+	},
+	"login.html": {
+		"refer": [
+			"index.html",
+			"register.html"
+		]
+	},
+	"CChat-me.html": {
+		"refer": [
+			"myface.html",
+			"mynickname.html"
+		]
+	},
+	"myface.html": {
+		"refer": [
+			"plugin/v3.1.6/myface-uploader.html"
+		]
+	},
+	"register.html": {
+		"refer": [
+			"index.html"
+		]
+	},
+	"CChat-discover.html": {
+		"refer": [
+			"searchfriends.html"
+		]
+	},
+	"searchfriends.html": {
+		"refer": [
+			"friendinfo.html"
+		]
+	}
+}
